@@ -3,9 +3,6 @@ const usersRouter = require('./users');
 const moviesRouter = require('./movies');
 const NotFoundError = require('../errors/NotFound');
 
-
-
-
 router.use('/users', usersRouter);
 
 router.use('/movies', moviesRouter);
