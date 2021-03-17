@@ -14,7 +14,9 @@ const findMovies = (req, res, next) => {
 // // # country, director, duration, year, description, image, trailer, nameRU, nameEN и thumbnail
 const createMovie = (req, res, next) => {
   const {
-    country, director, duration, year, description, image, trailer, nameRU, nameEN, thumbnail, movieId
+    country,
+    director,
+    duration, year, description, image, trailer, nameRU, nameEN, thumbnail, movieId,
   } = req.body;
   Movie.create({
     country,
