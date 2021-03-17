@@ -14,7 +14,7 @@ const findMovies = (req, res, next) => {
 // // # country, director, duration, year, description, image, trailer, nameRU, nameEN и thumbnail
 const createMovie = (req, res, next) => {
   const {
-    country, director, duration, year, description, image, trailer, nameRU, nameEN, thumbnail,
+    country, director, duration, year, description, image, trailer, nameRU, nameEN, thumbnail, movieId
   } = req.body;
   Movie.create({
     country,
@@ -28,6 +28,7 @@ const createMovie = (req, res, next) => {
     nameEN,
     thumbnail,
     owner: req.user._id,
+    movieId,
   })
     .then((data) => res.send(data))
     .catch((err) => {
