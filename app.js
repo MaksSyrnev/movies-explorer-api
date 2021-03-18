@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config();
-// const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const routes = require('./routes');
 const { createUser, login } = require('./controllers/users');
@@ -21,12 +20,10 @@ mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
   useFindAndModify: false,
   useUnifiedTopology: true,
 });
-// eslint-disable-next-line no-console
-mongoose.connection.on('open', () => console.log('DB connected!'));
 
-// app.use(bodyParser.json());
+// mongoose.connection.on('open', () => console.log('DB connected!'));
+
 app.use(express.json());
-// app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use(requestLogger);
@@ -43,6 +40,5 @@ app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
-  console.log(`App listening on port ${PORT}`);
+  //  console.log(`App listening on port ${PORT}`);
 });
