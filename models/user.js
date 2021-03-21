@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
-const Forbidden = require('../errors/Forbidden');
+const Unauthorized = require('../errors/Unauthorized');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -9,8 +9,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator(v) {
-        // eslint-disable-next-line no-useless-escape
-        return /^[a-z0-9A-z\-]*@[a-z0-9A-z\-]*\.[a-z0-9A-z\-]*/.test(v);
+        return /^[a-z0-9A-z-]*@[a-z0-9A-z-]*\.[a-z0-9A-z-]*/.test(v);
       },
     },
   },
@@ -28,17 +27,17 @@ const userSchema = new mongoose.Schema({
 
 });
 
-userSchema.statics.findUserByCredentials = function (email, password) {
+userSchema.statics.findUserByCredentials = function getToken(email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new Forbidden('Неправильные почта или пароль');
+        throw new Unauthorized('Неправильные почта или пароль');
       }
 
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new Forbidden('Неправильные почта или пароль');
+            throw new Unauthorized('Неправильные почта или пароль');
           }
 
           return user;

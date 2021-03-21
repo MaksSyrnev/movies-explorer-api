@@ -1,14 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config();
+const rateLimit = require('express-rate-limit');
 const { errors } = require('celebrate');
+const helmet = require('helmet');
 const routes = require('./routes');
-const { createUser, login } = require('./controllers/users');
-const auth = require('./middlewares/auth');
 const errorHandler = require('./middlewares/errorHandler');
-const createUserValidator = require('./middlewares/validators/createUserValidator');
-const loginValidator = require('./middlewares/validators/loginValidator');
-const authTokenValidator = require('./middlewares/validators/authTokenValidator');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
@@ -20,19 +17,20 @@ mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
   useFindAndModify: false,
   useUnifiedTopology: true,
 });
-
 // mongoose.connection.on('open', () => console.log('DB connected!'));
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // за 15 минут
+  max: 100, // максимум 100 запросов с одного IP
+});
+app.use(limiter);
+
+app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(requestLogger);
-app.post('/signin', loginValidator, login);
-app.post('/signup', createUserValidator, createUser);
-app.get('/signup', routes); // для ошибки 404
-app.get('/signin', routes); // для ошибки 404
 
-app.use(authTokenValidator, auth);
 app.use('/', routes);
 
 app.use(errorLogger);
