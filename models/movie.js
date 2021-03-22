@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const NotFoundError = require('../errors/NotFound');
 
 const movieSchema = new mongoose.Schema({
   country: { // — страна создания фильма. Обязательное поле-строка.
@@ -51,6 +52,7 @@ const movieSchema = new mongoose.Schema({
   owner: { // — _id пользователя, который сохранил статью. Обязательное поле.
     type: mongoose.Schema.Types.ObjectId,
     required: true,
+    select: false,
   },
   movieId: { // — id фильма, который содержится в ответе сервиса MoviesExplorer.
     type: Number,
@@ -76,5 +78,15 @@ const movieSchema = new mongoose.Schema({
   },
 
 });
+
+movieSchema.statics.findMovieAndOwner = function getMovie(id) {
+  return this.findById(id).select('+owner')
+    .then((data) => {
+      if (!data) {
+        throw new NotFoundError('Фильм не найден');
+      }
+      return data;
+    });
+};
 
 module.exports = mongoose.model('movie', movieSchema);

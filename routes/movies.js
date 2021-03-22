@@ -3,12 +3,11 @@ const {
   findMovies, createMovie, delMovie,
 } = require('../controllers/movies');
 const createMovieValidator = require('../middlewares/validators/createMovieValidator');
-const findUserValidator = require('../middlewares/validators/findUserValidator');
 const findMovieValidator = require('../middlewares/validators/findMovieValidator');
 
 // # возвращает все сохранённые пользователем фильмы
 // GET /movies
-router.get('/', findUserValidator, findMovies);
+router.get('/', findMovies);
 
 // # создаёт фильм с переданными в теле
 // # country, director, duration, year, description, image, trailer, nameRU, nameEN и thumbnail

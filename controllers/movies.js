@@ -7,30 +7,13 @@ const Forbidden = require('../errors/Forbidden');
 const findMovies = (req, res, next) => {
   Movie.find({ owner: req.user._id })
     .then((data) => {
-      if (data.length) { // есть сохраненные фильмы? обрабатываем массив
-        const moviesUser = data.map((item) => ({
-          country: item.country,
-          director: item.director,
-          duration: item.duration,
-          year: item.year,
-          description: item.description,
-          image: item.image,
-          trailer: item.trailer,
-          nameRU: item.nameRU,
-          nameEN: item.nameEN,
-          thumbnail: item.thumbnail,
-          movieId: item.movieId,
-        }));
-        res.send(moviesUser);
-      } else {
-        res.send(data);
-      }
+      res.send(data);
     })
     .catch(next);
 };
 
 // # создаёт фильм с переданными в теле
-// // # country, director, duration, year, description, image, trailer, nameRU, nameEN и thumbnail
+// # country, director, duration, year, description, image, trailer, nameRU, nameEN и thumbnail
 const createMovie = (req, res, next) => {
   const {
     country,
@@ -77,13 +60,14 @@ const createMovie = (req, res, next) => {
 // # удаляет сохранённый фильм по _id
 // DELETE /movies/movieId
 const delMovie = (req, res, next) => {
-  Movie.findById(req.params.movieId)
+  Movie.findMovieAndOwner(req.params.movieId)
     .then((data) => {
-      let { owner } = data;
-      owner = String(owner);
       if (!data) {
         throw new NotFoundError('Фильм не найден');
       }
+
+      let { owner } = data;
+      owner = String(owner);
 
       if (req.user._id === owner) {
         Movie.findByIdAndRemove(req.params.movieId)
